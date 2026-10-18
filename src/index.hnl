@@ -1,0 +1,52 @@
+--- kv_map — a pure functional key-value map. The store is a Handl record
+--- VALUE you hold and pass back — `kv_map.new() -> s`, `kv_map.set(s,k,v)
+--- -> s'`, `kv_map.get(s,k)` — so state is explicit data, not ambient
+--- module state like `kv`/`kv_hashmap` (which stay native). Pure `.hnl`
+--- over `obj.*` substrate + record field access.
+cap "kv_map.new"
+cap "kv_map.set"
+cap "kv_map.get"
+cap "kv_map.has"
+cap "kv_map.remove"
+cap "kv_map.clear"
+cap "kv_map.size"
+cap "kv_map.keys"
+op "kv_map.new" : () -> Value
+  guarantee: True
+op "kv_map.set" : (Value * Value * Value) -> Value
+  guarantee: True
+op "kv_map.get" : (Value * Value) -> Value
+  guarantee: True
+op "kv_map.has" : (Value * Value) -> Value
+  guarantee: True
+op "kv_map.remove" : (Value * Value) -> Value
+  guarantee: True
+op "kv_map.clear" : Value -> Value
+  guarantee: True
+op "kv_map.size" : Value -> Value
+  guarantee: True
+op "kv_map.keys" : Value -> Value
+  guarantee: True
+
+from "obj" import * as obj
+from "typeof" import * as typeof
+
+export new := () ~> ({})
+
+export set := (s, k, v) ~> obj.set(s, k, v)
+
+export get := (s, k) ~> s[k]
+
+export has := (s, k) ~> obj.keys(s).contains(k)
+
+export remove := (s, k) ~> obj.from_entries([...for e in obj.entries(s) if e[0] != k])
+
+export clear := (s) ~> ({})
+
+export size := (s) ~> list_len(obj.keys(s))
+
+export keys := (s) ~> obj.keys(s)
+
+list_len := (xs) ~> while { xs: xs, n: 0 } {
+  (xs, n) ~> if xs == [] { { done: true, v: n } } else { { done: false, v: { xs: xs[1:], n: n + 1 } } }
+}
