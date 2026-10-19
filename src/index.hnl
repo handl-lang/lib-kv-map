@@ -1,8 +1,8 @@
 --- kv_map — a pure functional key-value map. The store is a Handl record
 --- VALUE you hold and pass back — `kv_map.new() -> s`, `kv_map.set(s,k,v)
---- -> s'`, `kv_map.get(s,k)` — so state is explicit data, not ambient
---- module state like `kv`/`kv_hashmap` (which stay native). Pure `.hnl`
---- over `obj.*` substrate + record field access.
+--- -> s'`, `kv_map.get(s,k)` — state is explicit data, not ambient module
+--- state like `kv`/`kv_hashmap` (which stay native). Pure `.hnl` over
+--- `obj.*` substrate + record field access.
 cap "kv_map.new"
 cap "kv_map.set"
 cap "kv_map.get"
@@ -29,24 +29,35 @@ op "kv_map.keys" : Value -> Value
   guarantee: True
 
 from "obj" import * as obj
-from "typeof" import * as typeof
 
-export new := () ~> ({})
+do {
+  len :: (xs) ~> while { xs: xs, n: 0 } {
+    [xs, n] ~> match xs {
+      []: { out: n },
+      [_, ...t]: { state: { xs: t, n: n + 1 } }
+    }
+  }
 
-export set := (s, k, v) ~> obj.set(s, k, v)
+  hit :: (xs, k) ~> while { xs: xs, found: false } {
+    [xs, found] ~> match xs {
+      []: { out: found },
+      [x, ...t]: { state: { xs: t, found: if x == k { true } else { found } } }
+    }
+  }
 
-export get := (s, k) ~> s[k]
+  drop_k :: (xs, k) ~> while { xs: xs, out: [] } {
+    [xs, out] ~> match xs {
+      []: { out: out },
+      [e, ...t]: { state: { xs: t, out: if e[0] == k { out } else { [...out, e] } } }
+    }
+  }
 
-export has := (s, k) ~> obj.keys(s).contains(k)
-
-export remove := (s, k) ~> obj.from_entries([...for e in obj.entries(s) if e[0] != k])
-
-export clear := (s) ~> ({})
-
-export size := (s) ~> list_len(obj.keys(s))
-
-export keys := (s) ~> obj.keys(s)
-
-list_len := (xs) ~> while { xs: xs, n: 0 } {
-  (xs, n) ~> if xs == [] { { done: true, v: n } } else { { done: false, v: { xs: xs[1:], n: n + 1 } } }
+  { new: () ~> ({}),
+    set: (s, k, v) ~> obj.set(s, k, v),
+    get: (s, k) ~> s[k],
+    has: (s, k) ~> hit(obj.keys(s), k),
+    remove: (s, k) ~> obj.from_entries(drop_k(obj.entries(s), k)),
+    clear: (s) ~> ({}),
+    size: (s) ~> len(obj.keys(s)),
+    keys: (s) ~> obj.keys(s) }
 }
