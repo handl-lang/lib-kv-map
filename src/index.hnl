@@ -11,21 +11,21 @@ cap "kv_map.remove"
 cap "kv_map.clear"
 cap "kv_map.size"
 cap "kv_map.keys"
-op "kv_map.new" : () -> Value
+op "kv_map.new" : () ~> Value
   guarantee: True
-op "kv_map.set" : (Value * Value * Value) -> Value
+op "kv_map.set" : (Value * Value * Value) ~> Value
   guarantee: True
-op "kv_map.get" : (Value * Value) -> Value
+op "kv_map.get" : (Value * Value) ~> Value
   guarantee: True
-op "kv_map.has" : (Value * Value) -> Value
+op "kv_map.has" : (Value * Value) ~> Value
   guarantee: True
-op "kv_map.remove" : (Value * Value) -> Value
+op "kv_map.remove" : (Value * Value) ~> Value
   guarantee: True
-op "kv_map.clear" : Value -> Value
+op "kv_map.clear" : Value ~> Value
   guarantee: True
-op "kv_map.size" : Value -> Value
+op "kv_map.size" : Value ~> Value
   guarantee: True
-op "kv_map.keys" : Value -> Value
+op "kv_map.keys" : Value ~> Value
   guarantee: True
 
 from "obj" import * as obj
