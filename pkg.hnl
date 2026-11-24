@@ -1,0 +1,13 @@
+-- lib-kv-map: the `kv_map` module — a pure functional key-value map.
+-- The store is a Handl record VALUE passed explicitly
+-- (`kv_map.new() -> s`, `kv_map.set(s,k,v) -> s'`), not ambient module
+-- state. Pure .hnl over the `obj` substrate.
+{
+  deps: { obj: "branch:main" },
+  modules: ["kv_map"],
+  name: "kv_map",
+  description: "Pure functional key-value map — the store is a Handl record value threaded explicitly; pure .hnl over obj.*.",
+  license: "MIT",
+  keywords: ["kv", "map", "functional", "record", "handl"],
+  homepage: "https://github.com/handl-lang/lib-kv-map",
+}
