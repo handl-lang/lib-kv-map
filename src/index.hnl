@@ -31,21 +31,21 @@ op "kv_map.keys" : Value -> Value
 from "obj" import * as obj
 
 do {
-  len :: (xs) ~> while { xs: xs, n: 0 } {
+  len := (xs) ~> while { xs: xs, n: 0 } {
     [xs, n] ~> match xs {
       []: { out: n },
       [_, ...t]: { state: { xs: t, n: n + 1 } }
     }
   }
 
-  hit :: (xs, k) ~> while { xs: xs, found: false } {
+  hit := (xs, k) ~> while { xs: xs, found: false } {
     [xs, found] ~> match xs {
       []: { out: found },
       [x, ...t]: { state: { xs: t, found: if x == k { true } else { found } } }
     }
   }
 
-  drop_k :: (xs, k) ~> while { xs: xs, out: [] } {
+  drop_k := (xs, k) ~> while { xs: xs, out: [] } {
     [xs, out] ~> match xs {
       []: { out: out },
       [e, ...t]: { state: { xs: t, out: if e[0] == k { out } else { [...out, e] } } }
