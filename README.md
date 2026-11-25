@@ -11,7 +11,7 @@ ambient module state like `kv`/`kv_hashmap` (which stay native). Pure
 ```text
 src/index.hnl           the cap/op declarations (kv_map.*)
 scripts/hnl-gate.sh     the shared hnl typecheck/lint/test gate
-ci.sh                   bupha entry
+workflows/gate.yaml                   bupha entry (handl-gates)
 ```
 
 ## Gate
