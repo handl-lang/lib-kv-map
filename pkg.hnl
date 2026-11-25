@@ -5,7 +5,7 @@
 {
   deps: { obj: "branch:main" },
   modules: ["kv_map"],
-  name: "kv_map",
+  name: "kv-map",
   description: "Pure functional key-value map — the store is a Handl record value threaded explicitly; pure .hnl over obj.*.",
   license: "MIT",
   keywords: ["kv", "map", "functional", "record", "handl"],
