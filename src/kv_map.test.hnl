@@ -1,0 +1,36 @@
+--- Smoke tests for the `kv_map` module (`src/index.hnl`) — a pure
+--- functional key-value map: the store is a record value threaded
+--- explicitly through `new`/`set`/`get`/`has`/`remove`/`clear`/`size`/
+--- `keys`.
+
+from "./index" import * as kv
+
+test_new_empty := assert kv.size(kv.new()) == 0
+
+test_set_get := assert kv.get(kv.set(kv.new(), "a", 1), "a") == 1
+
+test_has := assert kv.has(kv.set(kv.new(), "a", 1), "a") == true
+
+test_has_missing := assert kv.has(kv.new(), "a") == false
+
+test_size := assert kv.size(kv.set(kv.set(kv.new(), "a", 1), "b", 2)) == 2
+
+test_remove := assert kv.size(kv.remove(kv.set(kv.new(), "a", 1), "a")) == 0
+
+test_clear := assert kv.size(kv.clear(kv.set(kv.new(), "a", 1))) == 0
+
+test_keys := assert kv.keys(kv.set(kv.new(), "a", 1)) == ["a"]
+
+-- stores are immutable values: the original is unchanged by set.
+test_persistent := do {
+  s0 := kv.new()
+  s1 := kv.set(s0, "a", 1)
+  assert kv.size(s0) == 0 && kv.get(s1, "a") == 1
+}
+
+-- get on a missing key is a contract violation (record index raises);
+-- capture it with error.try and match the err ctor.
+test_get_missing_raises := do {
+  r := error.try((x) ~> kv.get(kv.new(), "zz"))
+  assert match r { err(_): true, _: false }
+}
